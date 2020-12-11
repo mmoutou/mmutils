@@ -1,5 +1,5 @@
 # General utilities & math functions for global use.
-#
+# 
 # source('~/Nextcloud/MM/localgit/mmutils/gen_ut.R')  # rough and ready local sourcing
 
 # -------------------------------------
