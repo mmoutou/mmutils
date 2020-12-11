@@ -1,2 +1,3 @@
 # mmutils
-global utilities for absolutely everyone
+Global utilities functions in various languages, but no Cogent stuff!
+Includes probabilistic, RL, psychol stuff.
