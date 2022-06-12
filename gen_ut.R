@@ -26,6 +26,7 @@
 # dbetaMS(x, Mean, SD, ncp=0, log=FALSE)
 # dbetasc()
 # rbetasc()
+# rbetascMS()          # (n, fractionalMean, fractionalSD, lo=0, hi=1, ncp=0)
 # tbetvar(v,tau)       # for a beta distro with a,b > 1, sharpen or
                        # broaden acc. to a temerature tau. tau=1 leaves
                        # v unchanged, tau=0 turns v=0 too.
@@ -56,6 +57,7 @@
                        #       See also seq(from = 5, to = 100, by = 5)
 # List2Dgrid()         # 2D grid in terms of a dataframe of all pairs of coords
 # perm12(k)            # matrix w. all the k long binary strings 1..1,1..2 to 2..2
+# permVec(v)           # all permutations of the elements of a vector, from https://www.r-bloggers.com/2019/06/learning-r-permutations-and-combinations-with-base-r/
 # grid2DfromList()
 # error.bar
 # det2DcolMat()        # determinants of 2x2 vectorized matrices given as rows.
@@ -367,7 +369,20 @@ rbetasc <- function(n, shape1, shape2, lo=0, hi=1, ncp=0){
     auxv <- rbeta(n, shape1, shape2, ncp);
     return(  lo+ auxv*(hi-lo) );
 }
+# -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+rbetascMS <- function(n, fractionalMean, fractionalSD, lo=0, hi=1, ncp=0){
+### n samples are generated from the standard beta distro with 
+### M and SD as per fractionalMean etc., but then the distro is
+### mapped to lo - to - high. Good e.g. for avoiding extreme values
+### in recovery studies. e.g. x <- rbetascMS(30,0.4,0.2,0.05,0.95); hist(x); quantile(x,c(0,.5,1))
+  a <- (1-fractionalMean)*(fractionalMean*fractionalMean)/
+               (fractionalSD*fractionalSD) - fractionalMean;
+  b <- a*(1/fractionalMean - 1) ;
+  auxv <- rbeta(n, a, b, ncp);
+  return(  lo+ auxv*(hi-lo) );
+}
 
+# rbetascMS()          # (n, fractionalMean, fractionalSD, lo=0, hi=1, ncp=0)
 # -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 noisyBino <- function(pSucc, U, binN ){
    # this is the whole mdf for applying extra uncertainty U to binomial 
@@ -549,6 +564,19 @@ perm12 <- function( k ){
   }
   return(per)
 }
+# -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+permVec <- function(v) {
+  # All permutations of v given in a  matrix, 
+  # from https://www.r-bloggers.com/2019/06/learning-r-permutations-and-combinations-with-base-r/
+  n <- length(v)
+  if (n == 1) v
+  else {
+    X <- NULL
+    for (i in 1:n) X <- rbind(X, cbind(v[i], perm(v[-i])))
+    X
+  }
+}
+
 # -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 grid2DfromList <- function( XYlist, dims){
 # return the 1-D grids that gave rise to a list of pairs of numbers ...
