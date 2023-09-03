@@ -522,9 +522,17 @@ rmdf <- function(k, mdf,check=FALSE){
 # Repeat each element adjacent to itself N times so that c(1,2,3) becomes e.g.
 # c(1,1,2,2,3,3)
 repAdjVec <- function( inVec, repN) {
-
- return(  as.vector((rep(1,repN)) %*% t(inVec)) );
- 
+  tryCatch(
+    return(  as.vector((rep(1,repN)) %*% t(inVec)) ),
+  error=function(e) {
+    outVec <- rep(inVec,repN)
+    inLen  <- length(inVec);
+    for (k in 1:length(inVec)){
+      outVec[ ((k-1)*repN+1):(k*repN) ] <- rep(inVec[k],repN)
+    }
+    return(outVec)
+  }
+ )
 }
 
 # -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
@@ -724,7 +732,7 @@ KeplerInt1 <- function(Y,h,N,Check=0){
   Ie <- (1:((N-1)/2))*2;     # for 4 x
   Io <- (1:((N-3)/2))*2+1;   # for 2 x
   Ye <- array(Y[,Ie],c(dim(Y)[1],length(Ie)));
-  Yo <- array(Y[,Io],c(dim(Y)[1],length(I)));
+  Yo <- array(Y[,Io],c(dim(Y)[1],length(Io)));
 
   
   return( (h/3)*(Y[,1]+Y[,N]+4*rowSums(Ye)+2*rowSums(Yo)) )
