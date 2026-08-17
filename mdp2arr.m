@@ -1,11 +1,11 @@
 function [outp,lab] = mdp2arr(mdpv, v)
 % [outp,lab] = mdp2arr(mdpv, v)
 % returns in array form observations if v='o', states of v='s', priorOverState for 'd',
-% 
+%         actions if v='u' etc (see inside code...)
 % E.g. to get a col vec of the obs. along factor 3 at time 2 for all trials, use:
 % x = mdp2arr(mmdp,'o'); squeeze(x(3,2,:))'
 % However if the variable is itself a cell array such as d, outp will be 
-%    a cell array of same length ... 
+%    a cell array of same length. 
 
 try v; catch v = '-'; end
 l = length(mdpv);

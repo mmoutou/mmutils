@@ -10,6 +10,7 @@
 # logit()
 # invlogit()
 # ussig()              # Unit square sigmoid, x^z/(x^z + (1-x)^z) (Chris Matthys)
+# quadRamp(x,xLo,xHi)    # Quadratic ramp from xLo to xHi -> 0 to 1        
 
 # Regression auxiliaries
 # lmpvals()            # return just the p values from an lm object
@@ -230,6 +231,23 @@ if (!isTRUE( sum( x >= 0) == length(x))) {
 return(  1/(1+(((1-x)/x)^z)) );
 
 }
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#    Quadratic ramp from xLo to xHi -> 0 to 1     
+quadRamp <- function(x,xLo=0,xHi=1){
+  if (x <= xLo){ return(0); }
+  if (x >= xHi){ return(1); }
+  
+  # To reach here, it means x is inbetween xLo and xHi
+  xMid <- (xHi + xLo)/2
+  ySc <- 0.5/(xMid-xLo)^2
+  if (x <= xMid){
+    return( ySc * (x - xLo)^2 );
+  } else {
+    return( 1 - ySc * (xHi - x)^2 );
+  }
+  
+}
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # fns to discretize
 # discretize x to the nearest integer from 1 to N
